@@ -1,0 +1,26 @@
+{
+  "name": "@superhero/bootstrap",
+  "version": "4.0.0",
+  "description": "Bootstrap services with a set of default configurations.",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "devDependencies": {
+    "@superhero/config": "^4.0.0",
+    "@superhero/locator": "^4.0.0"
+  },
+  "scripts": {
+    "test": "node --trace-warnings --test --experimental-test-coverage"
+  },
+  "author": {
+    "name": "Erik Landvall",
+    "email": "erik@landvall.se"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superhero/bootstrap"
+  }
+}
