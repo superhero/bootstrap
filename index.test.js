@@ -1,15 +1,16 @@
 import assert     from 'node:assert'
 import bootstrap  from '@superhero/bootstrap'
-import locator    from '@superhero/locator'
+import Locator    from '@superhero/locator'
 import { before, beforeEach, suite, test } from 'node:test'
 
 suite('@superhero/bootstrap', () =>
 {
-  let config
+  let config, locator
 
   before(async () =>
   {
-    config = await locator.lazyload('@superhero/config')
+    locator = new Locator()
+    config  = await locator.lazyload('@superhero/config')
   })
 
   beforeEach(() => 
