@@ -1,24 +1,20 @@
 import assert     from 'node:assert'
 import bootstrap  from '@superhero/bootstrap'
-import Locator    from '@superhero/locator'
-import { before, beforeEach, suite, test } from 'node:test'
+import Config     from '@superhero/config'
+import Locate     from '@superhero/locator'
+import { beforeEach, suite, test } from 'node:test'
 
 suite('@superhero/bootstrap', () =>
 {
-  let config, locator
-
-  before(async () =>
-  {
-    locator = new Locator()
-    config  = await locator.lazyload('@superhero/config')
-  })
+  let config, locate
 
   beforeEach(() => 
   {
-    locator.clear()
+    locate = new Locate()
+    config = new Config()
   })
 
-  test('Bootstrap a simple process with no problem', async () =>
+  test('Can bootstrap a simple process with no problem', async () =>
   {
     const bootstrapMap = 
     {
@@ -30,11 +26,11 @@ suite('@superhero/bootstrap', () =>
       hasBootrappedServiceA = false,
       hasBootrappedServiceB = false
 
-    locator.set('serviceA', new class { bootstrap() { hasBootrappedServiceA = true } })
-    locator.set('serviceB', new class { bootstrap() { hasBootrappedServiceB = true } })
+    locate.set('serviceA', new class { bootstrap() { hasBootrappedServiceA = true } })
+    locate.set('serviceB', new class { bootstrap() { hasBootrappedServiceB = true } })
 
     await assert.doesNotReject(
-      async () => bootstrap.bootstrap(bootstrapMap, config, locator), 
+      async () => bootstrap(bootstrapMap, config, locate), 
       'Should bootstrap services without error')
 
     assert.ok(hasBootrappedServiceA, 'Should have bootstrapped serviceA')
@@ -51,11 +47,11 @@ suite('@superhero/bootstrap', () =>
 
     let hasBootrappedServiceB = false
 
-    locator.set('serviceA', new class { bootstrap() { throw 'Bootstrap for serviceA should not trigger' } })
-    locator.set('serviceB', new class { bootstrap() { hasBootrappedServiceB = true } })
+    locate.set('serviceA', new class { bootstrap() { throw 'Bootstrap for serviceA should not trigger' } })
+    locate.set('serviceB', new class { bootstrap() { hasBootrappedServiceB = true } })
 
     await assert.doesNotReject(
-      bootstrap.bootstrap(bootstrapMap, config, locator),
+      bootstrap(bootstrapMap, config, locate),
       'Should skip services marked as false')
 
     assert.ok(hasBootrappedServiceB, 'Should have bootstrapped serviceB')
@@ -79,7 +75,7 @@ suite('@superhero/bootstrap', () =>
       hasBootrappedServiceA = false,
       hasBootrappedServiceB = false
 
-    locator.set('serviceA', new class 
+    locate.set('serviceA', new class 
     {
       bootstrap(config)
       {
@@ -88,7 +84,7 @@ suite('@superhero/bootstrap', () =>
       }
     })
 
-    locator.set('serviceB', new class 
+    locate.set('serviceB', new class 
     {
       bootstrap(config)
       {
@@ -98,7 +94,7 @@ suite('@superhero/bootstrap', () =>
     })
 
     await assert.doesNotReject(
-      bootstrap.bootstrap(bootstrapMap, config, locator),
+      bootstrap(bootstrapMap, config, locate),
       'Should skip services marked as false')
 
     assert.ok(hasBootrappedServiceA, 'Should have bootstrapped serviceA')
@@ -107,14 +103,14 @@ suite('@superhero/bootstrap', () =>
 
   suite('Rejects', () =>
   {
-    test('If a bootstrap process throws', async () =>
+    test('Bootstrap process that throws', async () =>
     {
       const bootstrapMap = { serviceA: true }
   
-      locator.set('serviceA', new class { bootstrap() { throw 'bootstrap for serviceA should not be triggered' } })
+      locate.set('serviceA', new class { bootstrap() { throw 'bootstrap for serviceA should not be triggered' } })
   
       await assert.rejects(
-        bootstrap.bootstrap(bootstrapMap, config, locator),
+        bootstrap(bootstrapMap, config, locate),
         (error) => error.code === 'E_BOOTSTRAP',
         'Should reject with error for failed bootstrap process')
     })
@@ -122,7 +118,7 @@ suite('@superhero/bootstrap', () =>
     test('Using an invalid bootstrapMap', async () =>
     {
       await assert.rejects(
-        bootstrap.bootstrap(null, config, locator), 
+        bootstrap(null, config, locate), 
         (error) => error.code === 'E_BOOTSTRAP_INVALID_MAP', 
         'Should reject with error for invalid bootstrapMap')
     })
@@ -130,7 +126,7 @@ suite('@superhero/bootstrap', () =>
     test('Using an invalid configLocator', async () =>
     {
       await assert.rejects(
-        bootstrap.bootstrap({}, null, locator), 
+        bootstrap({}, null, locate), 
         (error) => error.code === 'E_BOOTSTRAP_INVALID_CONFIG_LOCATOR', 
         'Should reject with error for invalid configLocator')
     })
@@ -138,19 +134,19 @@ suite('@superhero/bootstrap', () =>
     test('Using an invalid serviceLocator', async () =>
     {
       await assert.rejects(
-        bootstrap.bootstrap({}, config, null),
+        bootstrap({}, config, null),
         (error) => error.code === 'E_BOOTSTRAP_INVALID_SERVICE_LOCATOR',
         'Should reject with error for invalid serviceLocator')
     })
-  
+
     test('Service does not implement "bootstrap"', async () =>
     {
       const bootstrapMap = { serviceA: true }
   
-      locator.set('serviceA', new class {})
+      locate.set('serviceA', new class {})
   
       await assert.rejects(
-        bootstrap.bootstrap(bootstrapMap, config, locator), 
+        bootstrap(bootstrapMap, config, locate), 
         (error) => error.code === 'E_BOOTSTRAP' && error.cause.code === 'E_BOOTSTRAP_INVALID_SERVICE_INTERFACE', 
         'Should reject with error for invalid service interface')
     })

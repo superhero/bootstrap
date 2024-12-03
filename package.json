@@ -1,6 +1,6 @@
 {
   "name": "@superhero/bootstrap",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "Bootstrap services with a set of default configurations.",
   "main": "index.js",
   "license": "MIT",
@@ -9,8 +9,8 @@
     ".": "./index.js"
   },
   "devDependencies": {
-    "@superhero/config": "^4.0.6",
-    "@superhero/locator": "^4.0.4"
+    "@superhero/config": "^4.1.0",
+    "@superhero/locator": "^4.1.2"
   },
   "scripts": {
     "test": "node --trace-warnings --test --experimental-test-coverage"

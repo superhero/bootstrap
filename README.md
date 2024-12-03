@@ -34,14 +34,15 @@ import bootstrap from '@superhero/bootstrap'
 
 ```javascript
 import bootstrap  from '@superhero/bootstrap'
+import Config     from '@superhero/config'
 import locator    from '@superhero/locator'
 
 // Locates a configuration manager
-const config = locator.lazyload('@superhero/config')
+const config = new Config()
 
 // Define your services
-locator.set('serviceA', new class { bootstrap(config) { console.log('Bootstrapping serviceA', config) } })
-locator.set('serviceB', new class { bootstrap(config) { console.log('Bootstrapping serviceB', config) } })
+locator.set('serviceA', new class { bootstrap(options) { console.log('Bootstrapping serviceA', options) } })
+locator.set('serviceB', new class { bootstrap(options) { console.log('Bootstrapping serviceB', options) } })
 
 // Assign configurations
 config.assign({ serviceA: { foo: 'bar' }, serviceB: { baz: 'qux' }})
@@ -50,7 +51,10 @@ config.assign({ serviceA: { foo: 'bar' }, serviceB: { baz: 'qux' }})
 const bootstrapMap = { serviceA: true, serviceB: true }
 
 // Bootstrap services
-await bootstrap.bootstrap(bootstrapMap, config, locator)
+await bootstrap(bootstrapMap, config, locator)
+// Output:
+// ⇢ Bootstrapping serviceA { "foo": "bar" }
+// ⇢ Bootstrapping serviceB { "baz": "qux" }
 ```
 
 ---
@@ -88,29 +92,30 @@ npm test
 
 ```
 ▶ @superhero/bootstrap
-  ✔ Bootstrap a simple process with no problem (2.622758ms)
-  ✔ Skips services that are defined as "false" in the bootstrap map (0.466346ms)
-  ✔ Configurations are passed along to the bootstrap (1.059434ms)
+  ✔ Can bootstrap a simple process with no problem (4.395798ms)
+  ✔ Skips services that are defined as "false" in the bootstrap map (0.515958ms)
+  ✔ Configurations are passed along to the bootstrap (0.709367ms)
 
   ▶ Rejects
-    ✔ If a bootstrap process throws (1.135434ms)
-    ✔ Using an invalid bootstrapMap (0.542784ms)
-    ✔ Using an invalid configLocator (0.388452ms)
-    ✔ Using an invalid serviceLocator (0.509068ms)
-    ✔ Service does not implement "bootstrap" (0.535394ms)
-  ✔ Rejects (3.663212ms)
-✔ @superhero/bootstrap (19.306015ms)
+    ✔ Bootstrap process that throws (0.908382ms)
+    ✔ Using an invalid bootstrapMap (0.692543ms)
+    ✔ Using an invalid configLocator (0.277624ms)
+    ✔ Using an invalid serviceLocator (0.257487ms)
+    ✔ Service does not implement "bootstrap" (0.24099ms)
+  ✔ Rejects (2.81272ms)
+✔ @superhero/bootstrap (10.238997ms)
 
 tests 8
+suites 2
 pass 8
 
 ----------------------------------------------------------------
 file            | line % | branch % | funcs % | uncovered lines
 ----------------------------------------------------------------
-index.js        | 100.00 |    88.00 |  100.00 | 
-index.test.js   | 100.00 |   100.00 |   96.00 | 
+index.js        | 100.00 |    88.46 |  100.00 | 
+index.test.js   | 100.00 |   100.00 |   95.83 | 
 ----------------------------------------------------------------
-all files       | 100.00 |    94.00 |   96.97 | 
+all files       | 100.00 |    94.00 |   96.88 | 
 ----------------------------------------------------------------
 ```
 
