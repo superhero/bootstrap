@@ -77,23 +77,23 @@ function validateServiceLocator(serviceLocator)
 function normalizeConfigLocator(configLocator)
 {
   return configLocator.find 
-        ? configLocator.find.bind(configLocator) 
-        : configLocator
+       ? configLocator.find.bind(configLocator) 
+       : configLocator
 }
 
 function normalizeServiceLocator(serviceLocator)
 {
   return serviceLocator.locate 
-        ? serviceLocator.locate.bind(serviceLocator) 
-        : serviceLocator
+       ? serviceLocator.locate.bind(serviceLocator) 
+       : serviceLocator
 }
 
 function normalizeServiceName(serviceName, id)
 {
   // if the service name is true, then use the id as the name
   return serviceName === true 
-        ? id 
-        : serviceName
+       ? id 
+       : serviceName
 }
 
 async function bootstrapService(serviceName, locateService, locateConfig)

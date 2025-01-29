@@ -1,6 +1,5 @@
 import assert     from 'node:assert'
 import bootstrap  from '@superhero/bootstrap'
-import Config     from '@superhero/config'
 import Locate     from '@superhero/locator'
 import { beforeEach, suite, test } from 'node:test'
 
@@ -11,7 +10,7 @@ suite('@superhero/bootstrap', () =>
   beforeEach(() => 
   {
     locate = new Locate()
-    config = new Config()
+    config = locate.config
   })
 
   test('Can bootstrap a simple process with no problem', async () =>
