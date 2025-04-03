@@ -103,6 +103,7 @@ async function bootstrapService(serviceName, locateService, locateConfig)
     const
       service = await locateService(serviceName),
       config  = await locateConfig(serviceName)
+             ?? await locateConfig(serviceName.split('/').filter((segment) => segment[0] !== '@').join('/'))
 
     if(typeof service.bootstrap === 'function')
     {
