@@ -1,3 +1,7 @@
+import Log from '@superhero/log'
+
+const log = new Log({ label: '[BOOTSTRAP]' })
+
 /**
  * @param {Object} bootstrapMap Map of services to bootstrap.
  * @param {Function|Object} configLocator Must be a function or an object with a find method.
@@ -13,15 +17,15 @@ export default async function bootstrap(bootstrapMap, configLocator, serviceLoca
     locateConfig  = normalizeConfigLocator(configLocator),
     locateService = normalizeServiceLocator(serviceLocator)
 
-  for(const [id, serviceName] of Object.entries(bootstrapMap))
+  for(const [serviceName, configPath] of Object.entries(bootstrapMap))
   {
-    if(serviceName === false)
+    if(configPath === false)
     {
       continue
     }
 
-    const normalizedServiceName = normalizeServiceName(serviceName, id)
-    await bootstrapService(normalizedServiceName, locateService, locateConfig)
+    const normalizedConfigPath = normalizeConfigPath(serviceName, configPath)
+    await bootstrapService(serviceName, locateService, locateConfig, normalizedConfigPath)
   }
 }
 
@@ -88,25 +92,45 @@ function normalizeServiceLocator(serviceLocator)
        : serviceLocator
 }
 
-function normalizeServiceName(serviceName, id)
+/**
+ * if the service name is true
+ * then use the same name as the service to locate the config
+ */
+function normalizeConfigPath(serviceName, configPath)
 {
-  // if the service name is true, then use the id as the name
-  return serviceName === true 
-       ? id 
-       : serviceName
+  return configPath === true 
+       ? serviceName
+       : configPath
 }
 
-async function bootstrapService(serviceName, locateService, locateConfig)
+/**
+ * remove the first segment of the path if it starts with "@"
+ */
+function simplifyConfigPath(configPath)
+{
+  const 
+    splitted = configPath.split('/'),
+    filtered = splitted.filter((segment, i) => false === (0 === i && segment[0] === '@')),
+    joined   = filtered.join('/')
+
+  return joined
+}
+
+async function bootstrapService(serviceName, locateService, locateConfig, configPath)
 {
   try
   {
     const
       service = await locateService(serviceName),
-      config  = await locateConfig(serviceName)
-             ?? await locateConfig(serviceName.split('/').filter((segment) => segment[0] !== '@').join('/'))
+      config  = await locateConfig(configPath)
+             ?? await locateConfig(simplifyConfigPath(configPath))
 
     if(typeof service.bootstrap === 'function')
     {
+      config
+      ? log.info`✔ ${serviceName}`
+      : log.info`✔ ${serviceName} (no config)`
+
       await service.bootstrap(config)
     }
     else
