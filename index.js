@@ -128,8 +128,8 @@ async function bootstrapService(serviceName, locateService, locateConfig, config
     if(typeof service.bootstrap === 'function')
     {
       config
-      ? log.info`✔ ${serviceName}`
-      : log.info`✔ ${serviceName} (no config)`
+      ? log.info`${serviceName}`
+      : log.info`${serviceName} (no config)`
 
       await service.bootstrap(config)
     }
