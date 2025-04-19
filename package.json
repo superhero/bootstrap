@@ -12,7 +12,7 @@
     "@superhero/log": "^4.0.2"
   },
   "devDependencies": {
-    "@superhero/locator": "^4.4.0"
+    "@superhero/locator": "^4.4.1"
   },
   "scripts": {
     "test": "node --trace-warnings --test --experimental-test-coverage"
