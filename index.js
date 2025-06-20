@@ -37,7 +37,7 @@ function validateBootstrapMap(bootstrapMap)
   {
     const error = new TypeError('BootstrapMap must be type [object Object]')
     error.code  = 'E_BOOTSTRAP_INVALID_MAP'
-    error.cause = new TypeError(`Invalid bootstrapMap type "${bootstrapMapType}"`)
+    error.cause = `Invalid bootstrapMap type "${bootstrapMapType}"`
     throw error
   }
 }
