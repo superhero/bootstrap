@@ -17,6 +17,8 @@ export default async function bootstrap(bootstrapMap, configLocator, serviceLoca
     locateConfig  = normalizeConfigLocator(configLocator),
     locateService = normalizeServiceLocator(serviceLocator)
 
+  Object.assign(log.config, locateConfig('core/log'))
+
   for(const [serviceName, configPath] of Object.entries(bootstrapMap))
   {
     if(configPath === false)
