@@ -1,4 +1,10 @@
 ---
+#### v4.7.11
+---
+
+Configure the log instance from the same config as defined for the  at path .
+
+---
 #### v4.7.10
 ---
 
